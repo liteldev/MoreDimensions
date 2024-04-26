@@ -127,7 +127,6 @@ SimpleCustomDimension::createGenerator(br::worldgen::StructureSetRegistry const&
         break;
     }
     default: {
-        std::cout << "test gen123" << std::endl;
         auto generator    = std::make_unique<VoidGenerator>(*this);
         generator->mBiome = level.getBiomeRegistry().lookupByHash(VanillaBiomeNames::Ocean);
         worldGenerator    = std::move(generator);
