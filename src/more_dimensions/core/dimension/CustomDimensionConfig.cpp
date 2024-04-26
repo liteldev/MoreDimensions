@@ -4,10 +4,8 @@
 #include "ll/api/Config.h"
 #include "ll/api/Logger.h"
 #include "ll/api/service/Bedrock.h"
+#include "ll/api/utils/ErrorUtils.h"
 #include "mc/server/common/PropertiesSettings.h"
-#include "mc/world/level/Level.h"
-#include "mc/world/level/LevelSeed64.h"
-#include "mc/world/level/storage/LevelData.h"
 
 namespace more_dimensions::CustomDimensionConfig {
 
@@ -24,19 +22,40 @@ void setDimensionConfigPath() {
 }
 
 bool loadConfigFile() {
-    if (!ll::config::loadConfig(dimConfig, dimensionConfigPath, [](auto&, auto&) -> bool { return false; })) {
-        if (ll::config::saveConfig(dimConfig, dimensionConfigPath)) {
-            logger.warn("Config file rewrite success!");
-        } else {
-            logger.warn("Config file rewrite fail!");
-            return false;
+    if (std::ifstream(dimensionConfigPath).good()) {
+        try {
+            if (ll::config::loadConfig(dimConfig, dimensionConfigPath, [](auto&, auto&) -> bool { return false; })) {
+                logger.info("Config file load success!");
+                return true;
+            }
+        } catch (...) {
+            logger.error("Config file load fail, will rewrite!");
+            ll::error_utils::printCurrentException(logger);
         }
     }
-    return true;
+    try {
+        if (ll::config::saveConfig(dimConfig, dimensionConfigPath)) {
+            logger.warn("Config file rewrite success!");
+            return true;
+        } else {
+            logger.error("Config rewrite failed!");
+        }
+    } catch (...) {
+        logger.error("Config rewrite failed!");
+        ll::error_utils::printCurrentException(logger);
+    }
+    return false;
 }
 
 bool saveConfigFile() {
-    if (!ll::config::saveConfig(dimConfig, dimensionConfigPath)) {
+    bool result = false;
+    try {
+        result = ll::config::saveConfig(dimConfig, dimensionConfigPath);
+    } catch (...) {
+        result = false;
+        ll::error_utils::printCurrentException(logger);
+    }
+    if (!result) {
         logger.error("Config file save fail!");
         return false;
     }
