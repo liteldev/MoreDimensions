@@ -199,7 +199,7 @@ DimensionType CustomDimensionManager::addDimension(
     bool                newDim{};
     if (impl->customDimensionMap.contains(dimName)) {
         info = impl->customDimensionMap.at(dimName);
-        loggerMoreDimMag.debug(
+        loggerMoreDimMag.info(
             "The dimension already registry. use old id, name: {}, id: {}, \ndata: {}",
             dimName,
             info.id.id,
@@ -211,7 +211,7 @@ DimensionType CustomDimensionManager::addDimension(
         info.nbt = data();
         newDim   = true;
         loggerMoreDimMag
-            .debug("registry new dimension, name: {}, id: {}, \ndata: {}", dimName, info.id.id, info.nbt.toSnbt());
+            .info("registry new dimension, name: {}, id: {}, \ndata: {}", dimName, info.id.id, info.nbt.toSnbt());
     };
 
     // registry create dimension function
@@ -224,7 +224,6 @@ DimensionType CustomDimensionManager::addDimension(
         [dimName, info, factory = std::move(factory)](ILevel& ilevel, Scheduler& scheduler) -> OwnerPtr<Dimension> {
             loggerMoreDimMag.debug("Create dimension, name: {}, id: {}", dimName, info.id.id);
             return factory(DimensionFactoryInfo{ilevel, scheduler, info.nbt, info.id});
-            //            return std::make_shared<NetherDimension>(ilevel, scheduler);
         }
     );
 
