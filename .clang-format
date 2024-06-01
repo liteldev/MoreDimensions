@@ -28,20 +28,19 @@ AllowShortBlocksOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterDefinitionReturnType: None
-AlwaysBreakTemplateDeclarations: 'Yes'
+AlwaysBreakTemplateDeclarations: "Yes"
 BinPackArguments: false
 BinPackParameters: false
 BreakBeforeBraces: Custom
 BreakBeforeBinaryOperators: NonAssignment
 ColumnLimit: 120
-CommentPragmas: '^ IWYU pragma:'
+CommentPragmas: "^ IWYU pragma:"
 ConstructorInitializerIndentWidth: 0
 IndentWidth: 4
 Language: Cpp
-MaxEmptyLinesToKeep: 1
+MaxEmptyLinesToKeep: 2
 PackConstructorInitializers: CurrentLine
 PointerAlignment: Left
 TabWidth: 4
 UseTab: Never
 SortIncludes: CaseSensitive
-IncludeBlocks: Regroup

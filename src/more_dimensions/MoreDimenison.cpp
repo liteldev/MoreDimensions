@@ -3,10 +3,8 @@
 #include "ll/api/plugin/NativePlugin.h"
 #include "ll/api/plugin/RegisterHelper.h"
 #include "ll/api/service/ServerInfo.h"
-#include "more_dimensions/core/Macros.h"
 
 #include <memory>
-
 
 namespace more_dimensions {
 
@@ -25,7 +23,7 @@ bool MoreDimenison::load() {
         return false;
     }
     getSelf().getLogger().info("More dimension is loaded");
-    getSelf().getLogger().info("Version: {}, Developer: LiteLDev", VERSION);
+    getSelf().getLogger().info("Version: {}, Developer: LiteLDev", getSelf().getManifest().version->to_string());
     return true;
 }
 
