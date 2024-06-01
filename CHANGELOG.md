@@ -7,15 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2024-06-01
+
+### Added
+
+- Adapted to LeviLamina `0.12.x`
+
 ## [0.2.1] - 2024-04-13
 
-### Feature
+### Added
 
 - Adapted to LeviLamina `0.11.x`
 
 ## [0.2.0] - 2024-03-27
 
-### Feature
+### Added
 
 - Adapted to BDS version `1.20.7x`
 - Support Levilamina `v0.10.x`
@@ -43,11 +49,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2024-03-07
 
-### Release
+### Added
 
 - Release the first version
 
-[Unreleased]: https://github.com/LiteLDev/MoreDimension/compare/v0.1.2...HEAD
-[0.1.2]: https://github.com/LiteLDev/MoreDimension/compare/v0.1.1...v0.1.2
-[0.1.1]: https://github.com/LiteLDev/MoreDimension/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/LiteLDev/MoreDimension/releases/tag/v0.1.0
+[Unreleased]: https://github.com/LiteLDev/MoreDimensions/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/LiteLDev/MoreDimensions/compare/v0.2.1...v0.3.0
+[0.2.1]: https://github.com/LiteLDev/MoreDimensions/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/LiteLDev/MoreDimensions/compare/v0.1.2...v0.2.0
+[0.1.2]: https://github.com/LiteLDev/MoreDimensions/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/LiteLDev/MoreDimensions/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/LiteLDev/MoreDimensions/releases/tag/v0.1.0

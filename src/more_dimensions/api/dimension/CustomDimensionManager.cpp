@@ -52,7 +52,7 @@ LL_TYPE_STATIC_HOOK(
     if (!dim || *dim <= 2) {
         return origin(std::move(dim));
     }
-    if (!VanillaDimensions::$DimensionMap().mLeft.contains(*dim)) {
+    if (!VanillaDimensions::DimensionMap.mLeft.contains(*dim)) {
         return VanillaDimensions::Undefined;
     }
     return *dim;
@@ -67,7 +67,7 @@ LL_TYPE_STATIC_HOOK(
     int dimId
 ) {
     if (dimId <= 2) return origin(dimId);
-    if (!VanillaDimensions::$DimensionMap().mLeft.contains(dimId)) {
+    if (!VanillaDimensions::DimensionMap.mLeft.contains(dimId)) {
         return VanillaDimensions::Undefined;
     }
     return {dimId};
@@ -94,7 +94,7 @@ LL_TYPE_STATIC_HOOK(
     DimensionType const& dim
 ) {
     if (dim <= 2) return origin(dim);
-    return VanillaDimensions::$DimensionMap().mLeft.at(dim);
+    return VanillaDimensions::DimensionMap.mLeft.at(dim);
 }
 
 // 当玩家加入服务器时，生成时的维度不存在，并且维度id不是Undefined时，把玩家放到主世界
@@ -111,7 +111,7 @@ LL_TYPE_INSTANCE_HOOK(
     auto result = origin(client, isXboxLive);
     if (!result) return result;
     auto spawnDimension = result->at("DimensionId");
-    if (!VanillaDimensions::$DimensionMap().mLeft.contains(AutomaticID<Dimension, int>(spawnDimension))) {
+    if (!VanillaDimensions::DimensionMap.mLeft.contains(AutomaticID<Dimension, int>(spawnDimension))) {
         result->at("Pos")[1] = FloatTag{0x7fff};
     }
     return result;
@@ -230,7 +230,7 @@ DimensionType CustomDimensionManager::addDimension(
 
     // modify default dimension map
     loggerMoreDimMag.debug("Add new dimension to DimensionMap");
-    ll::memory::modify(VanillaDimensions::$DimensionMap(), [&](auto& dimMap) {
+    ll::memory::modify(VanillaDimensions::DimensionMap, [&](auto& dimMap) {
         loggerMoreDimMag.debug("Add new dimension: name->{}, id->{} to DimensionMap", dimName, info.id.id);
         dimMap.insert_or_assign(dimName, info.id);
     });

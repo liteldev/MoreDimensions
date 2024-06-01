@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERSION "v0.2.1"
+#define VERSION "v0.3.0"
 
 #ifdef MORE_DIMENSIONS_EXPORTS
 
