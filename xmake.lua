@@ -46,7 +46,8 @@ target("more-dimensions")
     set_languages("cxx20")
 
     if has_config("tests") then
-        add_files("src/test/TestCustomDimension.cpp")
+        add_files("src/test/TestCustomDimension.cpp",
+                  "src/test/generator/flat-gen-village/**.cpp")
     end
 
     after_build(function (target)

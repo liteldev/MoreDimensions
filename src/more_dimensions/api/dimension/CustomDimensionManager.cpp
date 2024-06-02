@@ -49,9 +49,6 @@ LL_TYPE_STATIC_HOOK(
     Bedrock::Result<DimensionType>,
     Bedrock::Result<int>&& dim
 ) {
-    if (!dim || *dim <= 2) {
-        return origin(std::move(dim));
-    }
     if (!VanillaDimensions::DimensionMap.mLeft.contains(*dim)) {
         return VanillaDimensions::Undefined;
     }
@@ -66,7 +63,6 @@ LL_TYPE_STATIC_HOOK(
     DimensionType,
     int dimId
 ) {
-    if (dimId <= 2) return origin(dimId);
     if (!VanillaDimensions::DimensionMap.mLeft.contains(dimId)) {
         return VanillaDimensions::Undefined;
     }
@@ -93,7 +89,6 @@ LL_TYPE_STATIC_HOOK(
     std::string const,
     DimensionType const& dim
 ) {
-    if (dim <= 2) return origin(dim);
     return VanillaDimensions::DimensionMap.mLeft.at(dim);
 }
 
@@ -168,8 +163,7 @@ CustomDimensionManager::CustomDimensionManager() : impl(std::make_unique<Impl>()
                 name,
                 Impl::DimensionInfo{
                     info.dimId,
-                    *CompoundTag::fromBinaryNbt(ll::string_utils::decompress(ll::base64_utils::decode(info.base64Nbt)))
-                }
+                    *CompoundTag::fromBinaryNbt(ll::string_utils::decompress(ll::base64_utils::decode(info.base64Nbt)))}
             );
         }
         impl->mNewDimensionId += static_cast<int>(impl->customDimensionMap.size());
@@ -238,6 +232,7 @@ DimensionType CustomDimensionManager::addDimension(
     ll::memory::modify(VanillaDimensions::Undefined, [&](auto& uid) {
         uid.id = impl->mNewDimensionId;
         loggerMoreDimMag.debug("Set VanillaDimensions::Undefined to {}", uid.id);
+        loggerMoreDimMag.debug("Now VanillaDimensions::Undefined is {}", VanillaDimensions::Undefined.id);
     });
 
     // config
@@ -248,8 +243,7 @@ DimensionType CustomDimensionManager::addDimension(
             dimName,
             CustomDimensionConfig::Config::Info{
                 info.id,
-                ll::base64_utils::encode(ll::string_utils::compress(info.nbt.toBinaryNbt()))
-            }
+                ll::base64_utils::encode(ll::string_utils::compress(info.nbt.toBinaryNbt()))}
         );
         CustomDimensionConfig::saveConfigFile();
     }

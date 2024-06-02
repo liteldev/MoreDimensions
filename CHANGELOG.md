@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2024-06-02
+
+### Fix
+
+- Fix vanilla dimension can't create when the number of dimensions exceeds nine.
+
 ## [0.3.0] - 2024-06-01
 
 ### Added
@@ -53,7 +59,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Release the first version
 
-[Unreleased]: https://github.com/LiteLDev/MoreDimensions/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/LiteLDev/MoreDimensions/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/LiteLDev/MoreDimensions/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/LiteLDev/MoreDimensions/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/LiteLDev/MoreDimensions/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/LiteLDev/MoreDimensions/compare/v0.1.2...v0.2.0
