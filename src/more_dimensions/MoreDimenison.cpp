@@ -1,8 +1,9 @@
 #include "MoreDimenison.h"
 
-#include "ll/api/plugin/NativePlugin.h"
-#include "ll/api/plugin/RegisterHelper.h"
+#include "ll/api/Versions.h"
+#include "ll/api/mod/RegisterHelper.h"
 #include "ll/api/service/ServerInfo.h"
+
 
 #include <memory>
 
@@ -29,16 +30,14 @@ bool MoreDimenison::load() {
 
 bool MoreDimenison::enable() {
     getSelf().getLogger().info("Enabling...");
-    // Code for enabling the plugin goes here.
     return true;
 }
 
 bool MoreDimenison::disable() {
     getSelf().getLogger().info("Disabling...");
-    // Code for disabling the plugin goes here.
     return true;
 }
 
 } // namespace more_dimensions
 
-LL_REGISTER_PLUGIN(more_dimensions::MoreDimenison, more_dimensions::MoreDimenison::getInstance());
+LL_REGISTER_MOD(more_dimensions::MoreDimenison, more_dimensions::MoreDimenison::getInstance());

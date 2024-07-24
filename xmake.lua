@@ -2,7 +2,7 @@ add_rules("mode.debug", "mode.release")
 
 add_repositories("liteldev-repo https://github.com/LiteLDev/xmake-repo.git")
 
-add_requires("levilamina 0.13.0")
+add_requires("levilamina 0.13.4")
 
 if not has_config("vs_runtime") then
     set_runtimes("MD")
@@ -19,7 +19,6 @@ target("more-dimensions")
         "/utf-8"
     )
     add_defines(
-        "_HAS_CXX23=1",
         "MORE_DIMENSIONS_EXPORTS",
         "NOMINMAX",
         "UNICODE"

@@ -2,7 +2,7 @@
 
 More than three dimensions on BDS!
 
-**Note: This plugin only provides API. If you only install this plugin, the dimensions will not be created.**
+**Note: This mod only provides API. If you only install this mod, the dimensions will not be created.**
 
 ## Install
 

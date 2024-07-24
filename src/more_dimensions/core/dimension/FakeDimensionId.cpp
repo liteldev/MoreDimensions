@@ -8,14 +8,11 @@
 #include "mc/entity/utilities/ActorDataIDs.h"
 #include "mc/network/NetworkIdentifierWithSubId.h"
 #include "mc/network/ServerNetworkHandler.h"
-#include "mc/network/packet/ActorEventPacket.h"
 #include "mc/network/packet/AddVolumeEntityPacket.h"
 #include "mc/network/packet/ChangeDimensionPacket.h"
-#include "mc/network/packet/ClientboundMapItemDataPacket.h"
 #include "mc/network/packet/LevelChunkPacket.h"
 #include "mc/network/packet/PlayerActionPacket.h"
 #include "mc/network/packet/RemoveVolumeEntityPacket.h"
-#include "mc/network/packet/RespawnPacket.h"
 #include "mc/network/packet/SpawnParticleEffectPacket.h"
 #include "mc/network/packet/StartGamePacket.h"
 #include "mc/network/packet/SubChunkPacket.h"
@@ -25,7 +22,6 @@
 #include "mc/server/ServerPlayer.h"
 #include "mc/util/VarIntDataOutput.h"
 #include "mc/world/actor/SynchedActorDataEntityWrapper.h"
-#include "mc/world/actor/components/SynchedActorDataAccess.h"
 #include "mc/world/level/ChangeDimensionRequest.h"
 #include "mc/world/level/Level.h"
 #include "mc/world/level/dimension/VanillaDimensions.h"
@@ -356,7 +352,7 @@ LL_TYPE_INSTANCE_HOOK(
         }
         fakeDimensionId.onPlayerLeftCustomDimension(uuid, true);
         // flash player bounding box
-        player->getEntityData().markDirty(std::to_underlying(ActorDataIDs::CollisionBox));
+        player->getEntityData().markDirty(fmt::underlying(ActorDataIDs::CollisionBox));
     }
     return origin(netId, packet);
 };
