@@ -14,7 +14,7 @@ lip install github.com/LiteLDev/MoreDimensions
 
 ## Usage
 
-Wiki: [Chinese](https://github.com/LiteLDev/MoreDimensions/wiki)
+Wiki: [Chinese and English](https://github.com/LiteLDev/MoreDimensions/wiki)
 
 ## Contributing
 
