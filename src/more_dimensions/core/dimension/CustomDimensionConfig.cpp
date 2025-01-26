@@ -1,17 +1,19 @@
 
 #include "CustomDimensionConfig.h"
 
+#include "more_dimensions/MoreDimenison.h"
+
 #include "ll/api/Config.h"
-#include "ll/api/Logger.h"
 #include "ll/api/service/Bedrock.h"
 #include "ll/api/utils/ErrorUtils.h"
-#include "mc/server/common/PropertiesSettings.h"
+#include "mc/server/PropertiesSettings.h"
 
 namespace more_dimensions::CustomDimensionConfig {
 
-static ll::Logger            logger("CustomDimensionConfig");
+//static ll::Logger            logger("CustomDimensionConfig");
+auto& logger = MoreDimenison::getInstance().getSelf().getLogger();
+
 static std::filesystem::path dimensionConfigPath{u8"./worlds"};
-Config                       dimConfig{};
 
 void setDimensionConfigPath() {
     if (!ll::service::getLevel()) {
@@ -24,7 +26,7 @@ void setDimensionConfigPath() {
 bool loadConfigFile() {
     if (std::ifstream(dimensionConfigPath).good()) {
         try {
-            if (ll::config::loadConfig(dimConfig, dimensionConfigPath, [](auto&, auto&) -> bool { return false; })) {
+            if (ll::config::loadConfig(getConfig(), dimensionConfigPath)) {
                 logger.info("Config file load success!");
                 return true;
             }
@@ -34,7 +36,7 @@ bool loadConfigFile() {
         }
     }
     try {
-        if (ll::config::saveConfig(dimConfig, dimensionConfigPath)) {
+        if (ll::config::saveConfig(getConfig(), dimensionConfigPath)) {
             logger.warn("Config file rewrite success!");
             return true;
         } else {
@@ -50,7 +52,7 @@ bool loadConfigFile() {
 bool saveConfigFile() {
     bool result = false;
     try {
-        result = ll::config::saveConfig(dimConfig, dimensionConfigPath);
+        result = ll::config::saveConfig(getConfig(), dimensionConfigPath);
     } catch (...) {
         result = false;
         ll::error_utils::printCurrentException(logger);

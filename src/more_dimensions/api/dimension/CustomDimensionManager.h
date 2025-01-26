@@ -1,9 +1,9 @@
 #pragma once
 
 #include "mc/nbt/CompoundTag.h"
-#include "mc/world/AutomaticID.h"
-#include "mc/world/level/levelgen/GeneratorType.h"
+#include "mc/world/level/GeneratorType.h"
 #include "more_dimensions/core/Macros.h"
+#include <mc/deps/core/utility/AutomaticID.h>
 
 class Dimension;
 class ILevel;

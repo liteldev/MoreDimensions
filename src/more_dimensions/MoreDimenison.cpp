@@ -9,8 +9,8 @@
 
 namespace more_dimensions {
 
-std::unique_ptr<MoreDimenison>& MoreDimenison::getInstance() {
-    static std::unique_ptr<MoreDimenison> instance;
+MoreDimenison& MoreDimenison::getInstance() {
+    static MoreDimenison instance;
     return instance;
 }
 

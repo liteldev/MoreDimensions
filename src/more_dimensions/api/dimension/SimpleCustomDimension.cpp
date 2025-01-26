@@ -1,37 +1,81 @@
 
 #include "SimpleCustomDimension.h"
 
-#include "ll/api/Logger.h"
-#include "ll/api/service/Bedrock.h"
+#include "more_dimensions/MoreDimenison.h"
+
 #include "magic_enum.hpp"
-#include "mc/deps/core/mce/Color.h"
+
+#include "ll/api/memory/Memory.h"
+#include "ll/api/service/Bedrock.h"
+
+#include "mc/common/Brightness.h"
+#include "mc/common/BrightnessPair.h"
+#include "mc/deps/core/math/Color.h"
 #include "mc/world/level/BlockSource.h"
 #include "mc/world/level/DimensionConversionData.h"
 #include "mc/world/level/Level.h"
 #include "mc/world/level/LevelSeed64.h"
-#include "mc/world/level/biome/VanillaBiomeNames.h"
 #include "mc/world/level/biome/registry/BiomeRegistry.h"
-#include "mc/world/level/chunk/ChunkGeneratorStructureState.h"
-#include "mc/world/level/chunk/VanillaLevelChunkUpgrade.h"
+#include "mc/world/level/biome/registry/VanillaBiomeNames.h"
+#include "mc/world/level/biome/source/BiomeSource.h"
+#include "mc/world/level/biome/source/FixedBiomeSource.h"
+#include "mc/world/level/block/BlockVolume.h"
+#include "mc/world/level/chunk/vanilla_level_chunk_upgrade/VanillaLevelChunkUpgrade.h"
+#include "mc/world/level/dimension/DimensionHeightRange.h"
+#include "mc/world/level/dimension/NetherBrightnessRamp.h"
+#include "mc/world/level/dimension/OverworldBrightnessRamp.h"
 #include "mc/world/level/dimension/VanillaDimensions.h"
-#include "mc/world/level/levelgen/VoidGenerator.h"
 #include "mc/world/level/levelgen/flat/FlatWorldGenerator.h"
 #include "mc/world/level/levelgen/structure/EndCityFeature.h"
-#include "mc/world/level/levelgen/structure/StructureSetRegistry.h"
+#include "mc/world/level/levelgen/structure/StructureFeatureRegistry.h"
+#include "mc/world/level/levelgen/structure/registry//StructureSetRegistry.h"
+#include "mc/world/level/levelgen/synth/PerlinNoise.h"
+#include "mc/world/level/levelgen/synth/PerlinSimplexNoise.h"
+#include "mc/world/level/levelgen/synth/SimplexNoise.h"
 #include "mc/world/level/levelgen/v1/NetherGenerator.h"
 #include "mc/world/level/levelgen/v1/OverworldGeneratorMultinoise.h"
 #include "mc/world/level/levelgen/v1/TheEndGenerator.h"
+#include "mc/world/level/levelgen/v1/VoidGenerator.h"
+#include "mc/world/level/levelgen/v2/ChunkGeneratorStructureState.h"
+#include "mc/world/level/storage/LevelData.h"
+
 
 namespace more_dimensions {
 
-static ll::Logger loggerMoreDim("SimpleCustomDim");
+
+namespace {
+using namespace ll::memory_literals;
+static auto* overworldAddress = "`anonymous namespace'::unity_5c986e6b9d6571cc96912b0bfa0329e2::addStructureFeatures"_symp;
+static auto* netherAddress = "`anonymous namespace'::unity_3da1d4c9fa90b4b1becbca96840255a5::addStructureFeatures"_symp;
+
+void overworldAddStructureFeatures(
+    StructureFeatureRegistry& registry,
+    uint                      seed,
+    bool                      isLegacy,
+    BaseGameVersion const&    baseGameVersion
+) {
+    ll::memory::addressCall<void*, StructureFeatureRegistry&, uint, bool, BaseGameVersion const&>(overworldAddress, registry, seed, isLegacy, baseGameVersion);
+};
+
+void netherAddStructureFeatures(
+    StructureFeatureRegistry& registry,
+    uint                      seed,
+    BaseGameVersion const&    baseGameVersion,
+    Experiments const&        experiments
+){
+    ll::memory::addressCall<void*, StructureFeatureRegistry&, uint, BaseGameVersion const&, Experiments const&>(netherAddress, registry, seed, baseGameVersion, experiments);
+};
+} // namespace
+
+// static ll::Logger loggerMoreDim("SimpleCustomDim");
+auto& loggerMoreDim = MoreDimenison::getInstance().getSelf().getLogger();
 
 SimpleCustomDimension::SimpleCustomDimension(std::string const& name, DimensionFactoryInfo const& info)
 : Dimension(info.level, info.dimId, {-64, 320}, info.scheduler, name) {
     loggerMoreDim.debug("{} dimension name:{}", __FUNCTION__, name);
-    mDefaultBrightness.sky = Brightness::MAX;
-    generatorType          = *magic_enum::enum_cast<GeneratorType>((std::string_view)info.data["generatorType"]);
-    seed                   = info.data["seed"];
+    mDefaultBrightness->sky = Brightness::MAX();
+    generatorType           = *magic_enum::enum_cast<GeneratorType>((std::string_view)info.data["generatorType"]);
+    seed                    = info.data["seed"];
     switch (generatorType) {
     case GeneratorType::TheEnd: {
         mSeaLevel                = 63;
@@ -77,13 +121,13 @@ SimpleCustomDimension::createGenerator(br::worldgen::StructureSetRegistry const&
     case GeneratorType::Overworld: {
         worldGenerator =
             std::make_unique<OverworldGeneratorMultinoise>(*this, LevelSeed64::fromUnsigned32(seed), biome);
-        worldGenerator->getStructureFeatureRegistry().mChunkGeneratorStructureState =
+        worldGenerator->getStructureFeatureRegistry().mGeneratorState =
             br::worldgen::ChunkGeneratorStructureState::createNormal(
                 seed,
                 worldGenerator->getBiomeSource(),
                 structureSetRegistry
             );
-        unity_5c986e6b9d6571cc96912b0bfa0329e2::addStructureFeatures(
+        overworldAddStructureFeatures(
             worldGenerator->getStructureFeatureRegistry(),
             seed,
             false,
@@ -93,13 +137,13 @@ SimpleCustomDimension::createGenerator(br::worldgen::StructureSetRegistry const&
     }
     case GeneratorType::Nether: {
         worldGenerator = std::make_unique<NetherGenerator>(*this, seed, biome);
-        worldGenerator->getStructureFeatureRegistry().mChunkGeneratorStructureState =
+        worldGenerator->getStructureFeatureRegistry().mGeneratorState =
             br::worldgen::ChunkGeneratorStructureState::createNormal(
                 seed,
                 worldGenerator->getBiomeSource(),
                 structureSetRegistry
             );
-        unity_3da1d4c9fa90b4b1becbca96840255a5::addStructureFeatures(
+        netherAddStructureFeatures(
             worldGenerator->getStructureFeatureRegistry(),
             seed,
             levelData.getBaseGameVersion(),
@@ -109,32 +153,32 @@ SimpleCustomDimension::createGenerator(br::worldgen::StructureSetRegistry const&
     }
     case GeneratorType::TheEnd: {
         worldGenerator = std::make_unique<TheEndGenerator>(*this, seed, biome);
-        worldGenerator->getStructureFeatureRegistry().mChunkGeneratorStructureState =
+        worldGenerator->getStructureFeatureRegistry().mGeneratorState =
             br::worldgen::ChunkGeneratorStructureState::createNormal(
                 seed,
                 worldGenerator->getBiomeSource(),
                 structureSetRegistry
             );
-        worldGenerator->getStructureFeatureRegistry().mStructureFeatures.emplace_back(
+        worldGenerator->getStructureFeatureRegistry().mStructureFeatures->emplace_back(
             std::make_unique<EndCityFeature>(*this, seed)
         );
         break;
     }
     case GeneratorType::Flat: {
         worldGenerator = std::make_unique<FlatWorldGenerator>(*this, seed, levelData.getFlatWorldGeneratorOptions());
-        worldGenerator->getStructureFeatureRegistry().mChunkGeneratorStructureState =
+        worldGenerator->getStructureFeatureRegistry().mGeneratorState =
             br::worldgen::ChunkGeneratorStructureState::createFlat(seed, worldGenerator->getBiomeSource(), {});
         break;
     }
     default: {
         auto generator    = std::make_unique<VoidGenerator>(*this);
-        generator->mBiome = level.getBiomeRegistry().lookupByHash(VanillaBiomeNames::Ocean);
+        generator->mBiome = level.getBiomeRegistry().lookupByHash(VanillaBiomeNames::Ocean());
         worldGenerator    = std::move(generator);
-        worldGenerator->getStructureFeatureRegistry().mChunkGeneratorStructureState =
+        worldGenerator->getStructureFeatureRegistry().mGeneratorState =
             br::worldgen::ChunkGeneratorStructureState::createVoid(seed);
     }
     }
-    worldGenerator->init();
+    //    worldGenerator->init();
     return std::move(worldGenerator);
 }
 

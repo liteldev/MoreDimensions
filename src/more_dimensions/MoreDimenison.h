@@ -7,9 +7,9 @@ namespace more_dimensions {
 class MoreDimenison {
 
 public:
-    static std::unique_ptr<MoreDimenison>& getInstance();
+    static MoreDimenison& getInstance();
 
-    MoreDimenison(ll::mod::NativeMod& self) : mSelf(self) {}
+    MoreDimenison() : mSelf(*ll::mod::NativeMod::current()) {}
 
     [[nodiscard]] ll::mod::NativeMod& getSelf() const { return mSelf; }
 

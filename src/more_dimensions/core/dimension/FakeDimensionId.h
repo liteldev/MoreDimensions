@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ll/api/base/StdInt.h"
-#include "mc/deps/core/mce/UUID.h"
-#include "mc/math/Vec3.h"
+#include "mc/platform/UUID.h"
+#include "mc/deps/core/math/Vec3.h"
 #include "mc/network/packet/Packet.h"
-#include "mc/world/ActorRuntimeID.h"
+#include "mc/common/ActorRuntimeID.h"
 
 #include <functional>
 #include <iostream>

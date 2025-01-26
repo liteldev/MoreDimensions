@@ -1,11 +1,12 @@
 #pragma once
 
-#include "mc/deps/core/data/DividedPos2d.h"
 #include "mc/deps/core/utility/buffer_span.h"
 #include "mc/util/Random.h"
+#include "mc/world/level/BlockPos.h"
+#include "mc/world/level/DividedPos2d.h"
 #include "mc/world/level/block/BlockVolume.h"
 #include "mc/world/level/levelgen/flat/FlatWorldGenerator.h"
-
+#include "mc/deps/core/string/HashedString.h"
 
 #include <vector>
 
@@ -32,17 +33,16 @@ public:
     void loadChunk(LevelChunk& levelchunk, bool forceImmediateReplacementDataLoad);
 
     // 判断某个点在哪个结构范围里
-    StructureFeatureType findStructureFeatureTypeAt(BlockPos const&);
+    HashedString findStructureFeatureTypeAt(BlockPos const&);
 
     // 判断某个点是否在某个结构范围里
-    bool isStructureFeatureTypeAt(BlockPos const&, ::StructureFeatureType) const;
+    bool isStructureFeatureTypeAt(BlockPos const&, ::HashedString) const;
 
     // 这里是获取某个坐标的最高方块
     std::optional<short> getPreliminarySurfaceLevel(DividedPos2d<4> worldPos) const;
 
     // 如意，以一个坐标，在一定范围内查找某个类型的结构
-    bool
-    findNearestStructureFeature(::StructureFeatureType, BlockPos const&, BlockPos&, bool, std::optional<HashedString>);
+    bool findNearestStructureFeature(::HashedString, BlockPos const&, BlockPos&, bool, std::optional<HashedString>);
 
     // 无需在意，照写就行
     void garbageCollectBlueprints(buffer_span<ChunkPos>);
@@ -60,7 +60,7 @@ public:
     );
 
     // 可选，可以不写
-    BlockPos findSpawnPosition() const { return {0, 16, 0}; };
+    BlockPos findSpawnPosition() const { return BlockPos{0, 16, 0}; };
 };
 
 } // namespace flat_village_generator

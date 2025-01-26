@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ll/api/base/StdInt.h"
-#include "mc/world/level/levelgen/GeneratorType.h"
+#include "mc/world/level/GeneratorType.h"
 
 #include <string>
 #include <unordered_map>
@@ -16,7 +16,11 @@ struct Config {
     int                                   version = 3;
     std::unordered_map<std::string, Info> dimensionList{};
 };
-extern Config dimConfig;
+
+static Config& getConfig() {
+    static Config instance;
+    return instance;
+}
 
 void setDimensionConfigPath();
 bool loadConfigFile();
