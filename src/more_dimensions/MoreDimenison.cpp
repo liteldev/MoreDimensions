@@ -2,10 +2,6 @@
 
 #include "ll/api/Versions.h"
 #include "ll/api/mod/RegisterHelper.h"
-#include "ll/api/service/ServerInfo.h"
-
-
-#include <memory>
 
 namespace more_dimensions {
 
