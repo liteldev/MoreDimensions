@@ -406,6 +406,7 @@ LL_TYPE_INSTANCE_HOOK(
     auto screedId = ll::memory::dAccess<std::unique_ptr<LoadingScreenIdManager>>(&this->mLoadingScreenIdManager, 8)
                         ->getNextLoadingScreenId()
                         .mValue;
+    // issue #7
     screedId.emplace(screedId.value() + 1);
 
     fakeChangeDimension(

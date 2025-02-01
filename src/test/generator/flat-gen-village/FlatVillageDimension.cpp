@@ -21,7 +21,6 @@
 #include "mc/world/level/storage/LevelData.h"
 
 
-
 namespace flat_village_dimension {
 
 FlatVillageDimension::FlatVillageDimension(std::string const& name, more_dimensions::DimensionFactoryInfo const& info)

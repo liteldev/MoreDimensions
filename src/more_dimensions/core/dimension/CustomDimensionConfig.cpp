@@ -6,11 +6,12 @@
 #include "ll/api/Config.h"
 #include "ll/api/service/Bedrock.h"
 #include "ll/api/utils/ErrorUtils.h"
+
 #include "mc/server/PropertiesSettings.h"
 
 namespace more_dimensions::CustomDimensionConfig {
 
-//static ll::Logger            logger("CustomDimensionConfig");
+// static ll::Logger            logger("CustomDimensionConfig");
 auto& logger = MoreDimenison::getInstance().getSelf().getLogger();
 
 static std::filesystem::path dimensionConfigPath{u8"./worlds"};

@@ -1,14 +1,14 @@
 #pragma once
 
+#include "more_dimensions/core/Macros.h"
+
 #include "mc/nbt/CompoundTag.h"
 #include "mc/world/level/GeneratorType.h"
-#include "more_dimensions/core/Macros.h"
 #include <mc/deps/core/utility/AutomaticID.h>
 
 class Dimension;
 class ILevel;
 class Scheduler;
-using DimensionType = AutomaticID<Dimension, int>;
 
 namespace more_dimensions {
 

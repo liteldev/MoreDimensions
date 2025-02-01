@@ -1,8 +1,10 @@
+#include "test/generator/flat-gen-village/FlatVillageDimension.h"
+
 #include "ll/api/event/EventBus.h"
 #include "ll/api/event/server/ServerStartedEvent.h"
+
 #include "more_dimensions/api/dimension/CustomDimensionManager.h"
 #include "more_dimensions/api/dimension/SimpleCustomDimension.h"
-#include "test/generator/flat-gen-village/FlatVillageDimension.h"
 
 static bool reg = [] {
     using namespace ll::event;
