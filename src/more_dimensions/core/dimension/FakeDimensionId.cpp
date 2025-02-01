@@ -30,6 +30,7 @@
 #include "mc/network/packet/UpdateBlockPacket.h"
 #include "mc/server/ServerPlayer.h"
 #include "mc/util/MolangVariableMap.h"
+#include "mc/util/NewType.h"
 #include "mc/util/VarIntDataOutput.h"
 #include "mc/world/actor/ActorDataIDs.h"
 #include "mc/world/actor/SynchedActorDataEntityWrapper.h"
@@ -102,9 +103,15 @@ static void fakeChangeDimension(
     const NetworkIdentifier& netId,
     ActorRuntimeID           runtimeId,
     DimensionType            fakeDimId,
-    const Vec3&              pos
+    const Vec3&              pos,
+    std::optional<uint>      screedId
 ) {
-    ChangeDimensionPacket changeDimensionPacket{fakeDimId, pos, true, {0}};
+    // ChangeDimensionPacket changeDimensionPacket{fakeDimId, pos, true, {std::nullopt}};
+    ChangeDimensionPacket changeDimensionPacket;
+    changeDimensionPacket.mDimensionId     = fakeDimId;
+    changeDimensionPacket.mPos             = pos;
+    changeDimensionPacket.mRespawn         = true;
+    changeDimensionPacket.mLoadingScreenId = NewType<std::optional<uint>>(screedId);
     ll::service::getLevel()->getPacketSender()->sendToClient(netId, changeDimensionPacket, SubClientId::PrimaryClient);
     PlayerActionPacket playerActionPacket{PlayerActionType::ChangeDimensionAck, runtimeId};
     ll::service::getLevel()->getPacketSender()->sendToClient(netId, playerActionPacket, SubClientId::PrimaryClient);
@@ -388,12 +395,18 @@ LL_TYPE_INSTANCE_HOOK(
     if (changeRequest.mToDimensionId->id == 1 || changeRequest.mToDimensionId->id == 2 || inId == 1 || inId == 2
         || player.isDead()) {
         return origin(player, std::move(changeRequest));
-    }
+    };
+    auto screedId = ll::memory::dAccess<std::unique_ptr<LoadingScreenIdManager>>(&this->mLoadingScreenIdManager, 8)
+                        ->getNextLoadingScreenId()
+                        .mValue;
+    screedId.emplace(screedId.value()+1);
+
     fakeChangeDimension(
         player.getNetworkIdentifier(),
         player.getRuntimeID(),
         more_dimensions::FakeDimensionId::temporaryDimId,
-        player.getPosition()
+        player.getPosition(),
+        screedId
     );
     return origin(player, std::move(changeRequest));
 }
