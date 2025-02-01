@@ -6,7 +6,9 @@
 #include "ll/api/memory/Hook.h"
 #include "ll/api/service/Bedrock.h"
 
+#include "mc/common/ActorRuntimeID.h"
 #include "mc/common/ActorUniqueID.h"
+#include "mc/deps/core/math/Vec3.h"
 #include "mc/deps/core/utility/BinaryStream.h"
 #include "mc/deps/ecs/gamerefs_entity/EntityContext.h"
 #include "mc/entity/components/MovementPackets.h"
@@ -38,9 +40,14 @@
 #include "mc/world/level/ChangeDimensionRequest.h"
 #include "mc/world/level/ChunkPos.h"
 #include "mc/world/level/Level.h"
+#include "mc/world/level/LoadingScreenIdManager.h"
 #include "mc/world/level/SpawnSettings.h"
 #include "mc/world/level/dimension/VanillaDimensions.h"
 #include "mc/world/level/levelSettings.h"
+
+
+#include <memory>
+#include <optional>
 
 
 // ChangeDimensionPacket.java
@@ -64,10 +71,10 @@ static void sendEmptyChunk(const NetworkIdentifier& netId, int chunkX, int chunk
     VarIntDataOutput        varIntDataOutput(binaryStream);
 
     varIntDataOutput.writeBytes(&biome, 4096); // write void biome
-    for (int i = 1; i < 8; i++) {
+    for (int i = 1; i <= 8; i++) {
         varIntDataOutput.writeByte(255ui8);
     }
-    varIntDataOutput.mStream.writeUnsignedChar(0); // write border blocks
+    varIntDataOutput.mStream.writeBool(false); // write border blocks
 
     levelChunkPacket.mPos->x         = chunkX;
     levelChunkPacket.mPos->z         = chunkZ;
@@ -326,7 +333,7 @@ LL_TYPE_INSTANCE_HOOK(
     std::optional<MolangVariableMap> molang
 ) {
     if (dimId >= 3) {
-        dimId = FakeDimensionId::fakeDim;
+        dimId = FakeDimensionId::fakeDim.id;
     }
     return origin(pos, particle_name, dimId, std::move(molang));
 }
@@ -392,14 +399,14 @@ LL_TYPE_INSTANCE_HOOK(
     ChangeDimensionRequest&& changeRequest
 ) {
     auto inId = player.getDimensionId();
-    if (changeRequest.mToDimensionId->id == 1 || changeRequest.mToDimensionId->id == 2 || inId == 1 || inId == 2
+    if (changeRequest.mToDimensionId->id == 1 || changeRequest.mToDimensionId->id == 2 || inId.id == 1 || inId.id == 2
         || player.isDead()) {
         return origin(player, std::move(changeRequest));
     };
     auto screedId = ll::memory::dAccess<std::unique_ptr<LoadingScreenIdManager>>(&this->mLoadingScreenIdManager, 8)
                         ->getNextLoadingScreenId()
                         .mValue;
-    screedId.emplace(screedId.value()+1);
+    screedId.emplace(screedId.value() + 1);
 
     fakeChangeDimension(
         player.getNetworkIdentifier(),
@@ -440,12 +447,12 @@ void FakeDimensionId::changePacketDimension(Packet& packet) {
     case MinecraftPacketIds::RemoveVolumeEntityPacket: {
         auto& tempP          = (RemoveVolumeEntityPacket&)packet;
         tempP.mDimensionType = fakeDim;
-        logger.debug("MinecraftPacketIds::RemoveVolumeEntityPacket: dimId change to {}", fakeDim);
+        logger.debug("MinecraftPacketIds::RemoveVolumeEntityPacket: dimId change to {}", fakeDim.id);
     }
     case MinecraftPacketIds::AddVolumeEntityPacket: {
         auto& tempP          = (AddVolumeEntityPacket&)packet;
         tempP.mDimensionType = fakeDim;
-        logger.debug("MinecraftPacketIds::AddVolumeEntityPacket: dimId change to {}", fakeDim);
+        logger.debug("MinecraftPacketIds::AddVolumeEntityPacket: dimId change to {}", fakeDim.id);
     }
     default:
         return;

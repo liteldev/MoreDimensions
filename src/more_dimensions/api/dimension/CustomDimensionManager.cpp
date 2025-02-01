@@ -141,11 +141,13 @@ LL_AUTO_TYPE_INSTANCE_HOOK(
     return false;
 }
 
+// 1.21.50.10 unnecessary
 // registry dimensoin when in ll, must reload Dimension::getWeakRef
-LL_TYPE_INSTANCE_HOOK(DimensionGetWeakRefHook, HookPriority::Normal, Dimension, &Dimension::getWeakRef, WeakRef<Dimension>) {
-    if (getDimensionId().id > 2 && getDimensionId() != VanillaDimensions::Undefined()) return weak_from_this();
-    return origin();
-};
+// LL_TYPE_INSTANCE_HOOK(DimensionGetWeakRefHook, HookPriority::Normal, Dimension, &Dimension::getWeakRef,
+// WeakRef<Dimension>) {
+//     if (getDimensionId().id > 2 && getDimensionId() != VanillaDimensions::Undefined()) return weak_from_this();
+//     return origin();
+// };
 
 using HookReg = ll::memory::HookRegistrar<
     VanillaDimensionsConverHook,
@@ -154,8 +156,7 @@ using HookReg = ll::memory::HookRegistrar<
     VanillaDimensionsToSerializedIntHook,
     VanillaDimensionsToStringHook,
     LevelStorageloadServerPlayerDataHook,
-    PropertiesSettingsisClientSideGenEnabledHook,
-    DimensionGetWeakRefHook>;
+    PropertiesSettingsisClientSideGenEnabledHook>;
 
 } // namespace CustomDimensionHookList
 

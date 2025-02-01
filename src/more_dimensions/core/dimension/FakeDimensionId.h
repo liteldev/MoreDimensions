@@ -1,15 +1,11 @@
 #pragma once
 
-#include "ll/api/base/StdInt.h"
-#include "mc/platform/UUID.h"
-#include "mc/deps/core/math/Vec3.h"
+#include "mc/deps/core/utility/AutomaticID.h"
 #include "mc/network/packet/Packet.h"
-#include "mc/common/ActorRuntimeID.h"
+#include "mc/platform/UUID.h"
 
-#include <functional>
-#include <iostream>
+
 #include <mutex>
-#include <string>
 #include <unordered_map>
 
 class ServerPlayer;
@@ -24,8 +20,8 @@ class FakeDimensionId {
 
     std::unordered_map<mce::UUID, CustomDimensionIdSetting> mSettingMap; // save in more dimension player
 public:
-    static constexpr int fakeDim        = 0; // Overworld, Make the client think of the dimension
-    static constexpr int temporaryDimId = 1; // Dimensions of transit
+    static constexpr AutomaticID<Dimension, int> fakeDim = 0; // Overworld, Make the client think of the dimension
+    static constexpr AutomaticID<Dimension, int> temporaryDimId = 1; // Dimensions of transit
 
     static FakeDimensionId& getInstance();
 
