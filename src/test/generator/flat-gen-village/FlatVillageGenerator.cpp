@@ -1,6 +1,7 @@
 #include "FlatVillageGenerator.h"
 
 #include "mc/deps/core/math/Random.h"
+#include "mc/platform/threading/Mutex.h"
 #include "mc/util/ThreadOwner.h"
 #include "mc/world/level/BlockSource.h"
 #include "mc/world/level/ChunkPos.h"
@@ -13,6 +14,7 @@
 #include "mc/world/level/chunk/PostprocessingManager.h"
 #include "mc/world/level/dimension/Dimension.h"
 #include "mc/world/level/levelgen/v1/ChunkLocalNoiseCache.h"
+
 
 
 namespace flat_village_generator {

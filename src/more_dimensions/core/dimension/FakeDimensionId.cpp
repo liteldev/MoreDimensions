@@ -46,6 +46,7 @@
 #include "mc/world/level/levelSettings.h"
 
 
+
 #include <memory>
 #include <optional>
 
@@ -107,18 +108,18 @@ static void sendEmptyChunks(const NetworkIdentifier& netId, const Vec3& position
 }
 
 static void fakeChangeDimension(
-    const NetworkIdentifier& netId,
-    ActorRuntimeID           runtimeId,
-    DimensionType            fakeDimId,
-    const Vec3&              pos,
-    std::optional<uint>      screedId
+    const NetworkIdentifier&     netId,
+    ActorRuntimeID               runtimeId,
+    DimensionType                fakeDimId,
+    const Vec3&                  pos,
+    NewType<std::optional<uint>> screedId
 ) {
     // ChangeDimensionPacket changeDimensionPacket{fakeDimId, pos, true, {std::nullopt}};
     ChangeDimensionPacket changeDimensionPacket;
     changeDimensionPacket.mDimensionId     = fakeDimId;
     changeDimensionPacket.mPos             = pos;
     changeDimensionPacket.mRespawn         = true;
-    changeDimensionPacket.mLoadingScreenId = NewType<std::optional<uint>>(screedId);
+    changeDimensionPacket.mLoadingScreenId = screedId;
     ll::service::getLevel()->getPacketSender()->sendToClient(netId, changeDimensionPacket, SubClientId::PrimaryClient);
     PlayerActionPacket playerActionPacket{PlayerActionType::ChangeDimensionAck, runtimeId};
     ll::service::getLevel()->getPacketSender()->sendToClient(netId, playerActionPacket, SubClientId::PrimaryClient);
@@ -150,7 +151,7 @@ LL_TYPE_INSTANCE_HOOK(
         if (modifPacket.mDimensionId->id >= 3) {
             modifPacket.mDimensionId = 0;
         }
-        if (modifPacket.mDimensionId->id == VanillaDimensions::Undefined()) {
+        if (modifPacket.mDimensionId->id == VanillaDimensions::Undefined().id) {
             modifPacket.mDimensionId->id = 3;
         }
         if (modifPacket.mClientRequestSubChunkLimit <= 8) {
@@ -404,10 +405,9 @@ LL_TYPE_INSTANCE_HOOK(
         return origin(player, std::move(changeRequest));
     };
     auto screedId = ll::memory::dAccess<std::unique_ptr<LoadingScreenIdManager>>(&this->mLoadingScreenIdManager, 8)
-                        ->getNextLoadingScreenId()
-                        .mValue;
+                        ->getNextLoadingScreenId();
     // issue #7
-    screedId.emplace(screedId.value() + 1);
+    screedId.mValue.emplace(screedId.mValue.value() + 1);
 
     fakeChangeDimension(
         player.getNetworkIdentifier(),
