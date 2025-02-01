@@ -40,12 +40,14 @@
 #include "mc/world/level/storage/LevelData.h"
 
 
+
 namespace more_dimensions {
 
 
 namespace {
 using namespace ll::memory_literals;
-static auto* overworldAddress = "`anonymous namespace'::unity_5c986e6b9d6571cc96912b0bfa0329e2::addStructureFeatures"_symp;
+static auto* overworldAddress =
+    "`anonymous namespace'::unity_5c986e6b9d6571cc96912b0bfa0329e2::addStructureFeatures"_symp;
 static auto* netherAddress = "`anonymous namespace'::unity_3da1d4c9fa90b4b1becbca96840255a5::addStructureFeatures"_symp;
 
 void overworldAddStructureFeatures(
@@ -54,7 +56,13 @@ void overworldAddStructureFeatures(
     bool                      isLegacy,
     BaseGameVersion const&    baseGameVersion
 ) {
-    ll::memory::addressCall<void*, StructureFeatureRegistry&, uint, bool, BaseGameVersion const&>(overworldAddress, registry, seed, isLegacy, baseGameVersion);
+    ll::memory::addressCall<void*, StructureFeatureRegistry&, uint, bool, BaseGameVersion const&>(
+        overworldAddress,
+        registry,
+        seed,
+        isLegacy,
+        baseGameVersion
+    );
 };
 
 void netherAddStructureFeatures(
@@ -62,8 +70,14 @@ void netherAddStructureFeatures(
     uint                      seed,
     BaseGameVersion const&    baseGameVersion,
     Experiments const&        experiments
-){
-    ll::memory::addressCall<void*, StructureFeatureRegistry&, uint, BaseGameVersion const&, Experiments const&>(netherAddress, registry, seed, baseGameVersion, experiments);
+) {
+    ll::memory::addressCall<void*, StructureFeatureRegistry&, uint, BaseGameVersion const&, Experiments const&>(
+        netherAddress,
+        registry,
+        seed,
+        baseGameVersion,
+        experiments
+    );
 };
 } // namespace
 
@@ -119,8 +133,7 @@ SimpleCustomDimension::createGenerator(br::worldgen::StructureSetRegistry const&
 
     switch (generatorType) {
     case GeneratorType::Overworld: {
-        worldGenerator =
-            std::make_unique<OverworldGeneratorMultinoise>(*this, LevelSeed64::fromUnsigned32(seed), biome);
+        worldGenerator = std::make_unique<OverworldGeneratorMultinoise>(*this, LevelSeed64{seed}, biome);
         worldGenerator->getStructureFeatureRegistry().mGeneratorState =
             br::worldgen::ChunkGeneratorStructureState::createNormal(
                 seed,

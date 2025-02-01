@@ -55,7 +55,7 @@ FlatVillageDimension::createGenerator(br::worldgen::StructureSetRegistry const& 
         structureMap.emplace_back(iter->second);
     }
     worldGenerator->getStructureFeatureRegistry().mGeneratorState->mSeed   = seed;
-    worldGenerator->getStructureFeatureRegistry().mGeneratorState->mSeed64 = LevelSeed64::fromUnsigned32(seed);
+    worldGenerator->getStructureFeatureRegistry().mGeneratorState->mSeed64 = LevelSeed64{seed};
 
     // 这个就相当于在这个生成器里注册结构了
     // VillageFeature的第二第三个参数是村庄之间的最大间隔与最小间隔

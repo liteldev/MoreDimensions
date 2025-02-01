@@ -1,18 +1,18 @@
 #include "FlatVillageGenerator.h"
 
+#include "mc/deps/core/math/Random.h"
+#include "mc/util/ThreadOwner.h"
 #include "mc/world/level/BlockSource.h"
+#include "mc/world/level/ChunkPos.h"
 #include "mc/world/level/Level.h"
-#include "mc/world/level/biome/registry/VanillaBiomeNames.h"
 #include "mc/world/level/biome/registry/BiomeRegistry.h"
+#include "mc/world/level/biome/registry/VanillaBiomeNames.h"
+#include "mc/world/level/biome/source/FixedBiomeSource.h"
 #include "mc/world/level/chunk/ChunkViewSource.h"
 #include "mc/world/level/chunk/LevelChunk.h"
 #include "mc/world/level/chunk/PostprocessingManager.h"
-#include "mc/world/level/levelgen/v1/ChunkLocalNoiseCache.h"
-#include "mc/util/ThreadOwner.h"
-#include "mc/deps/core/math/Random.h"
-#include "mc/world/level/biome/source/FixedBiomeSource.h"
-#include "mc/world/level/ChunkPos.h"
 #include "mc/world/level/dimension/Dimension.h"
+#include "mc/world/level/levelgen/v1/ChunkLocalNoiseCache.h"
 
 
 namespace flat_village_generator {
@@ -21,7 +21,7 @@ FlatVillageGenerator::FlatVillageGenerator(Dimension& dimension, uint seed, Json
 : FlatWorldGenerator(dimension, seed, generationOptionsJSON) {
     // 值得注意的是，我们是继承的FlatWorldGenerator，后续也会使用其内部成员，所以我们需要调用FlatWorldGenerator的构造
     random.mRandom->mObject.mSeed = seed;
-    mSeed = seed;
+    mSeed                         = seed;
 
     mBiome       = getLevel().getBiomeRegistry().lookupByHash(VanillaBiomeNames::Plains());
     mBiomeSource = std::make_unique<FixedBiomeSource>(*mBiome);
@@ -39,19 +39,21 @@ bool FlatVillageGenerator::postProcess(ChunkViewSource& neighborhood) {
     auto lockChunk =
         levelChunk->getDimension().mPostProcessingManager->tryLock(levelChunk->getPosition(), neighborhood);
 
-    if (!lockChunk) {
+    if (!lockChunk.has_value()) {
         return false;
     }
     BlockSource blockSource(getLevel(), neighborhood.getDimension(), neighborhood, false, true, true);
-    auto        chunkPosL = levelChunk->getPosition();
+    auto        chunkPosL         = levelChunk->getPosition();
     random.mRandom->mObject.mSeed = seed;
-    auto one = 2 * (random.nextInt() / 2) + 1;
-    auto two = 2 * (random.nextInt() / 2) + 1;
+    auto one                      = 2 * (random.nextInt() / 2) + 1;
+    auto two                      = 2 * (random.nextInt() / 2) + 1;
     random.mRandom->mObject.mSeed = seed ^ (chunkPosL.x * one + chunkPosL.z * two);
     // 放置结构体，如果包含有某个结构的区块，就会放置loadChunk准备的结构
     WorldGenerator::postProcessStructureFeatures(blockSource, random, chunkPosL.x, chunkPosL.z);
     // 处理其它单体结构，比如沉船，这里不是必须
     WorldGenerator::postProcessStructures(blockSource, random, chunkPosL.x, chunkPosL.z);
+    // 1.21.50.10 起，有更改，需添加以下调用
+    levelChunk->finalizePostProcessing();
     return true;
 }
 
@@ -108,7 +110,7 @@ bool FlatVillageGenerator::isStructureFeatureTypeAt(const BlockPos& blockPos, ::
 }
 
 bool FlatVillageGenerator::findNearestStructureFeature(
-    ::HashedString      type,
+    ::HashedString              type,
     BlockPos const&             blockPos,
     BlockPos&                   blockPos1,
     bool                        mustBeInNewChunks,

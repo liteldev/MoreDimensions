@@ -1,8 +1,10 @@
 #pragma once
 
-#include "mc/world/level/dimension/Dimension.h"
 #include "more_dimensions/api/dimension/CustomDimensionManager.h"
 #include "more_dimensions/core/Macros.h"
+
+#include "mc/world/level/dimension/Dimension.h"
+
 
 class ChunkSource;
 class LevelChunk;

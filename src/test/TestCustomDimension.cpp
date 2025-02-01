@@ -100,3 +100,21 @@ static bool reg = [] {
 //         .required("p1")
 //         .execute(lambda);
 // }
+
+// #include "mc/world/level/LoadingScreenIdManager.h"
+// #include "ll/api/memory/Hook.h"
+
+// LL_AUTO_TYPE_INSTANCE_HOOK(
+//     ScreenIdHookTest,
+//     ll::memory::HookPriority::Normal,
+//     LoadingScreenIdManager,
+//     &LoadingScreenIdManager::getNextLoadingScreenId,
+//     NewType<::std::optional<uint>>) {
+//     auto result =  origin();
+//     if (result.mValue.has_value()){
+//         std::cout<<"Test screedId: "<<result.mValue.value()<<std::endl;
+//     }else {
+//         std::cout<<"Test screedId: Null"<<std::endl;
+//     }
+//     return result;
+// }
